@@ -32,6 +32,10 @@ function CreatePoll() {
       console.log('Poll created successfully:', data);
       alert("Poll created successfully")
       // navigate('/poll');
+      setTitle('');
+      setDescription('');
+      setOption1('');
+      setOption2('');
     })
     .catch(error => {
       console.error('Error:', error);

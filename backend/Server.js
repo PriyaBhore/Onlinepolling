@@ -22,7 +22,7 @@ app.use(cookieParser());
 
 
 
-
+//Connection
 const db = mysql.createConnection({
   host: 'localhost',
   user: 'root',
@@ -36,14 +36,13 @@ db.connect((err) => {
 });
 
 
-// Register route
 app.post('/register', async (req, res) => {
   const { email, password } = req.body;
   if (!email || !password) return res.status(400).json({ message: 'Email and password are required' });
   const checkUser = 'SELECT * FROM users WHERE email = ?';
   db.query(checkUser, [email], async (err, result) => {
       if (err) return res.status(500).send({ error: 'Database error' });
-      if (result.length > 0) return res.status(400).send({ error: 'User already exists' });
+      if (result.length > 0) return res.status(400).send({ error: 'User already exists.' });
 
       const hashedPassword = await bcrypt.hash(password, 10);
       const sql = 'INSERT INTO users (email, password) VALUES (?, ?)';
@@ -55,40 +54,46 @@ app.post('/register', async (req, res) => {
 });
 
 
+
 // Login route
 app.post('/login', async (req, res) => {
   const { email, password } = req.body;
+
   if (!email || !password) return res.status(400).json({ message: 'Email and password are required' });
+
   const findUserQuery = 'SELECT * FROM users WHERE email = ?';
+
   db.query(findUserQuery, [email], async (err, results) => {
     if (err) return res.status(500).json({ error: err.message });
+
     if (results.length === 0) {
-      return res.status(400).json({ message: 'Invalid email or password' });
+      return res.status(404).json({ message: 'User not found. Please sign up first.' });
     }
 
     const user = results[0];
 
     const isPasswordValid = await bcrypt.compare(password, user.password);
     if (!isPasswordValid) {
-      return res.status(400).json({ message: 'Invalid email or password' });
+      return res.status(401).json({ message: 'Invalid email or password' });
     }
 
-    const token = jwt.sign({ id: user.id, email: user.email,usertype: user.usertype }, process.env.JWT_SECRET, {
-      expiresIn: process.env.JWT_EXPIRES_IN
-    });
-
+    const token = jwt.sign(
+      { id: user.id, email: user.email, usertype: user.usertype },
+      process.env.JWT_SECRET,
+      { expiresIn: process.env.JWT_EXPIRES_IN }
+    );
 
     res.cookie('token', token, {
       httpOnly: true,
-      secure: process.env.NODE_ENV === 'production', // Set secure in production for HTTPS
-      maxAge: 24 * 60 * 60 * 1000 ,// 1 day
+      secure: process.env.NODE_ENV === 'production',
+      maxAge: 24 * 60 * 60 * 1000, 
       sameSite: 'Strict'
     });
 
-    res.json({ message: 'Login successful',user:{id: user.id, email: user.email,usertype: user.usertype} });
-
+    res.json({ message: 'Login successful', user: { id: user.id, email: user.email, usertype: user.usertype } });
   });
 });
+
 
 
 

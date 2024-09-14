@@ -16,6 +16,7 @@ const AuthenticationForm = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState(null);
+  const [successMessage, setSuccessMessage] = useState('');
   const navigate = useNavigate();
 
   const handleLogin = async (e) => {
@@ -38,8 +39,10 @@ const AuthenticationForm = () => {
         } else {
           navigate('/user-dashboard');
         }
+      } else if (response.status === 404) {
+        setError('User not found. Please sign up first.');
       } else {
-        setError(data.message);
+        setError(data.message || 'Login failed');
       }
     } catch (error) {
       setError('Login failed');
@@ -48,18 +51,6 @@ const AuthenticationForm = () => {
   
   
 
-  // const handleSignup = (e) => {
-  //   e.preventDefault();
-  //   // Simple signup logic for now
-  //   if (email === '' || password === '') {
-  //     setError('Please enter both email and password');
-  //   } else {
-  //     setError(null);
-  //     console.log('Signing up with:', { email, password });
-  //     // Handle signup logic here
-  //   }
-  // };
-
   useEffect(()=>{
     setError('');
     setEmail('');
@@ -67,39 +58,40 @@ const AuthenticationForm = () => {
   },[isLogin])
 
   
-
-  const handleSignup = async (e) => {
+  const handleSignup = (e) => {
     e.preventDefault();
-  
-    // Basic validation
-    if (email === '' || password === '') {
-      setError('Please enter both email and password');
-      return;
-    }
-  
-    try {
-      // Sending POST request to register endpoint
-      const response = await fetch('http://localhost:5000/register', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, password }),
-        credentials: 'include', // Include cookies with request if needed
+
+    fetch('http://localhost:5000/register', {
+      method: 'POST',
+      credentials: 'include',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        email,
+        password,
+      }),
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        if (data.error) {
+          setError(data.error);
+          setSuccessMessage('');
+        } else {
+          setSuccessMessage('User registered successfully!');
+          setError('');
+          alert('User registered successfully!'); // Show alert to confirm registration
+
+          // Clear form data and error after alert box is closed
+          setEmail('');
+          setPassword('');
+          setSuccessMessage('');
+        }
+      })
+      .catch((error) => {
+        console.error('Error:', error);
+        setError('An error occurred while registering.');
       });
-  
-      const data = await response.json();
-  
-      if (response.ok) {
-        // Handle successful registration
-        alert('User registered successfully');
-        // Optionally redirect to login page or dashboard
-        navigate('/login');
-      } else {
-        // Handle errors
-        setError(data.error || 'Registration failed');
-      }
-    } catch (error) {
-      setError('Registration failed');
-    }
   };
   
   return (
