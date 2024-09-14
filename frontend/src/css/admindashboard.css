@@ -1,0 +1,52 @@
+/* General dashboard styling */
+h2 {
+    font-family: 'Arial', sans-serif;
+    font-size: 32px;
+    color: #333;
+    text-align: center;
+    margin-bottom: 30px;
+    background-color: beige;
+    padding: 20px;
+    box-shadow: 1px 2px 2px black;
+    color: brown;
+  }
+  
+  button {
+    background-color: #007bff; /* Button color */
+    border: none;
+    color: white;
+    padding: 12px 20px;
+    font-size: 16px;
+    cursor: pointer;
+    border-radius: 8px;
+    box-shadow: 0px 4px 0px 0px #0056b3; /* 3D effect */
+    transition: all 0.3s ease;
+    outline: none;
+    display: block;
+    margin: 10px auto; /* Centering buttons */
+    width: 200px;
+  }
+  
+  button:hover {
+    background-color: #0056b3; /* Darker color on hover */
+    transform: translateY(-2px); /* Lift effect */
+  }
+  
+  button:active {
+    box-shadow: 0px 2px 0px 0px #0056b3; /* Slight shadow on click */
+    transform: translateY(2px); /* Press effect */
+  }
+  
+  /* Responsive design */
+  @media (max-width: 768px) {
+    button {
+      width: 100%;
+      padding: 15px;
+      font-size: 18px;
+    }
+  
+    h2 {
+      font-size: 24px;
+    }
+  }
+  

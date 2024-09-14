@@ -1,0 +1,21 @@
+.poll-results-container {
+    width: 50%;
+    margin: 0 auto;
+    font-family: 'Arial', sans-serif;
+    text-align: center;
+  }
+  
+  .poll-results-container h2 {
+    color: #333;
+  }
+  
+  .poll-results-container p {
+    font-size: 18px;
+    margin: 10px 0;
+  }
+  
+  .poll-results-container h3 {
+    font-weight: bold;
+    color: #4CAF50;
+  }
+  
